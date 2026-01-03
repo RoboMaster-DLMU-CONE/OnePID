@@ -1,0 +1,28 @@
+manifest:
+  version: "1.2"
+
+  defaults:
+    remote: origin
+
+  remotes:
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
+    - name: origin
+      url-base: https://github.com/RoboMaster-DLMU-CONE
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject-rtos
+      revision: main
+      import:
+        name-allowlist:
+          - cmsis
+          - cmsis_6
+    - name: OnePID
+      repo-path: OnePID
+      path: modules/lib/onepid
+      revision: main
+
+  self:
+    path: modules/lib/onepid
+

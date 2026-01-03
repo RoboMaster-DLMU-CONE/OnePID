@@ -1,0 +1,20 @@
+config ONE_PID
+    bool "OnePID library support"
+    select CPP
+    select REQUIRES_FULL_LIBCPP
+    help
+      Enable OnePID library for pid control.
+
+if ONE_PID
+
+choice STD_CPP
+    prompt "C++ Standard"
+    depends on CPP
+    default STD_CPP20
+endchoice
+
+module = ONE_PID
+module-str = OnePID
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # ONE_PID

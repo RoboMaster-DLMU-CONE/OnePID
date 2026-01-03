@@ -1,0 +1,4 @@
+name: onepid
+build:
+  cmake: .
+  kconfig: zephyr/Kconfig
