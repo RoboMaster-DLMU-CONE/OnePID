@@ -47,7 +47,7 @@ public:
   explicit PidChain(const Config &conf) : head(conf) {}
 
   template <typename T> auto compute(T target, T measure) {
-    return head.compute();
+    return head.compute(target, measure);
   }
 
   void reset() { return head.reset(); }

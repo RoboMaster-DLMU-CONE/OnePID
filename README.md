@@ -138,13 +138,16 @@ int main() {
 ### 链式控制器示例
 
 ```cpp
-PidConfig<Positional, float> config1(params1);
-PidConfig<Positional, float> config2(params2);
+  constexpr PidParams<float> p1{.Kp = 1.0, .MaxOutput = 100};
+  constexpr PidParams<float> p2{.Kp = 2.0, .Ki = 0.5};
 
-PidChain<decltype(config1), decltype(config2)> chain(config1, config2);
+  constexpr PidConfig<Positional, float, WithDeadband> conf1(p1);
+  constexpr PidConfig<Positional, float, WithOutputFilter> conf2(p2);
+  PidChain chain(conf1, conf2);
 
-// 使用链式控制器
-auto output = chain.compute(target1, measure1, measure2);
+  float output = chain.compute(10.0f, 2.0f, 5.0f);
+
+
 ```
 
 ## Zephyr RTOS 支持
