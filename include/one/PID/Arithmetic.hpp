@@ -9,7 +9,7 @@
 
 #include <concepts>
 
-namespace OneMotor {
+namespace one::pid {
 /**
  * @concept Arithmetic
  * @brief 约束一个类型 `T` 必须是整数类型或浮点数类型。
@@ -17,6 +17,6 @@ namespace OneMotor {
  */
 template <typename T>
 concept Arithmetic = std::integral<T> || std::floating_point<T>;
-} // namespace OneMotor
+} // namespace one::pid
 
 #endif // ARITHMETIC_HPP
