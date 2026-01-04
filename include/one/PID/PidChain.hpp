@@ -19,7 +19,7 @@ template <typename Config, typename... RestConfigs> class ChainCore {
 
     template <typename T, typename... Ms>
     auto compute(T target, T dt, T measure, Ms... measures) {
-        auto current_output = head.template compute<true>(target, measure, dt);
+        auto current_output = head.template compute<false>(target, measure, dt);
         return tail.compute(current_output, dt, measures...);
     }
 
@@ -49,7 +49,7 @@ template <typename Config> class ChainCore<Config> {
     explicit ChainCore(const Config &config) : head(config) {};
 
     template <typename T> auto compute(T target, T dt, T measure) {
-        return head.template compute<true>(target, measure, dt);
+        return head.template compute<false>(target, measure, dt);
     }
 
     void reset() { head.reset(); }
@@ -69,6 +69,9 @@ template <typename... Configs> class PidChain {
 
   public:
     explicit PidChain(const Configs &...configs) : core(configs...) {}
+
+    static constexpr size_t Size = sizeof...(Configs);
+    constexpr size_t size() { return Size; }
 
     template <typename T, typename... Ms>
     auto compute(T target, T measure, Ms... measures) {
