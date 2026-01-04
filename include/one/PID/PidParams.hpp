@@ -11,17 +11,17 @@ namespace one::pid {
  * @tparam ValueType_ PID计算所使用的数据类型。
  */
 template <Arithmetic ValueType_ = float> struct PidParams {
-  ValueType_ Kp{}; ///< 比例增益
-  ValueType_ Ki{}; ///< 积分增益
-  ValueType_ Kd{}; ///< 微分增益
-  ValueType_ MaxOutput{
-      std::numeric_limits<ValueType_>::infinity()}; ///< 最大输出值
+    ValueType_ Kp{}; ///< 比例增益
+    ValueType_ Ki{}; ///< 积分增益
+    ValueType_ Kd{}; ///< 微分增益
+    ValueType_ MaxOutput{
+        std::numeric_limits<ValueType_>::infinity()}; ///< 最大输出值
 
-  ValueType_ Deadband{}; ///< 死区范围
-  ValueType_ IntegralLimit{
-      std::numeric_limits<ValueType_>::infinity()}; ///< 积分项限幅
-  ValueType_ DerivativeFilterRC{}; ///< 微分项滤波器的时间常数 (RC)
-  ValueType_ OutputFilterRC{};     ///< 输出滤波器的时间常数 (RC)
+    ValueType_ Deadband{}; ///< 死区范围
+    ValueType_ IntegralLimit{
+        std::numeric_limits<ValueType_>::infinity()}; ///< 积分项限幅
+    ValueType_ DerivativeFilterRC{}; ///< 微分项滤波器的时间常数 (RC)
+    ValueType_ OutputFilterRC{};     ///< 输出滤波器的时间常数 (RC)
 };
 
 /**

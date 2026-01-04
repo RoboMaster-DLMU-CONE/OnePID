@@ -1,64 +1,87 @@
 #ifndef ONE_PID_PIDCHAIN_HPP_
 #define ONE_PID_PIDCHAIN_HPP_
 
+#include "DeltaT.hpp"
 #include <cstddef>
 namespace one::pid {
-template <typename Config, typename... RestConfigs> class PidChain {
-  using Node = Config::ControllerType;
-  using NextChain = PidChain<RestConfigs...>;
 
-public:
-  static constexpr size_t Size = sizeof...(RestConfigs) + 1;
-  constexpr size_t size() { return Size; }
+namespace detail {
+template <typename Config, typename... RestConfigs> class ChainCore {
+    using Node = Config::ControllerType;
+    using NextCore = ChainCore<RestConfigs...>;
 
-  explicit PidChain(const Config &conf, const RestConfigs &...rest)
-      : head(conf), tail(rest...) {}
+  public:
+    static constexpr size_t Size = sizeof...(RestConfigs) + 1;
+    constexpr size_t size() { return Size; }
 
-  template <typename T, typename... Ms>
-  auto compute(T target, T measure, Ms... measures) {
-    auto current_output = head.compute(target, measure);
-    return tail.compute(current_output, measures...);
-  }
+    explicit ChainCore(const Config &conf, const RestConfigs &...rest)
+        : head(conf), tail(rest...) {};
 
-  void reset() {
-    head.reset();
-    tail.reset();
-  }
+    template <typename T, typename... Ms>
+    auto compute(T target, T dt, T measure, Ms... measures) {
+        auto current_output = head.template compute<true>(target, measure, dt);
+        return tail.compute(current_output, dt, measures...);
+    }
 
-  template <size_t Index> auto &get() {
-    if constexpr (Index == 0)
-      return head;
-    else
-      return tail.template get<Index - 1>();
-  }
+    void reset() {
+        head.reset();
+        tail.reset();
+    }
 
-private:
-  Node head;
-  NextChain tail;
+    template <size_t Index> auto &get() {
+        if constexpr (Index == 0)
+            return head;
+        else
+            return tail.template get<Index - 1>();
+    }
+
+  private:
+    Node head;
+    NextCore tail;
+};
+template <typename Config> class ChainCore<Config> {
+    using Node = Config::ControllerType;
+
+  public:
+    static constexpr size_t Size = 1;
+    constexpr size_t size() { return Size; }
+
+    explicit ChainCore(const Config &config) : head(config) {};
+
+    template <typename T> auto compute(T target, T dt, T measure) {
+        return head.template compute<true>(target, measure, dt);
+    }
+
+    void reset() { head.reset(); }
+
+    template <size_t Index> auto &get() {
+        static_assert(Index == 0, "Index out of bounds");
+        return head;
+    }
+
+  private:
+    Node head;
 };
 
-template <typename Config> class PidChain<Config> {
-  using Node = Config::ControllerType;
+} // namespace detail
 
-public:
-  static constexpr size_t Size = 1;
-  constexpr size_t size() { return Size; }
+template <typename... Configs> class PidChain {
 
-  explicit PidChain(const Config &conf) : head(conf) {}
+  public:
+    explicit PidChain(const Configs &...configs) : core(configs...) {}
 
-  template <typename T> auto compute(T target, T measure) {
-    return head.compute(target, measure);
-  }
+    template <typename T, typename... Ms>
+    auto compute(T target, T measure, Ms... measures) {
+        return core.compute(target, d.getDeltaMS(), measure, measures...);
+    }
 
-  void reset() { return head.reset(); }
+    void reset() { core.reset(); }
 
-  template <size_t Size> auto &get() {
-    static_assert(Size == 0, "Index out of bounds");
-    return head;
-  }
+    template <size_t Index> auto &get() { return core.template get<Index>(); }
 
-private:
-  Node head;
+  private:
+    detail::ChainCore<Configs...> core;
+    DeltaT<float> d;
 };
 
 } // namespace one::pid

@@ -8,10 +8,11 @@ namespace one::pid {
 template <typename Algorithm = Positional, typename ValueType = float,
           typename... Features>
 struct PidConfig : public PidParams<ValueType> {
-  using ControllerType = PidController<Algorithm, ValueType, Features...>;
-  explicit constexpr PidConfig(const PidParams<ValueType> &p)
-      : PidParams<ValueType>(p) {};
-  constexpr PidConfig() = default;
+    using ControllerType = PidController<Algorithm, ValueType, Features...>;
+    using _ValueType = ValueType;
+    explicit constexpr PidConfig(const PidParams<ValueType> &p)
+        : PidParams<ValueType>(p) {};
+    constexpr PidConfig() = default;
 };
 
 } // namespace one::pid
