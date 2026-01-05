@@ -14,10 +14,13 @@ else ()
   project(OnePID VERSION 0.1.0)
 endif ()
 
+add_library(${PROJECT_NAME} INTERFACE)
+
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
+target_include_directories(${PROJECT_NAME} INTERFACE ${PROJECT_SOURCE_DIR}/include)
 if (ZEPHYR_TOOLCHAIN_VARIANT)
-  include(OnePidZephyr)
-else ()
-  include(OnePidNormal)
+  zephyr_link_libraries(${PROJECT_NAME}::${PROJECT_NAME})
 endif ()
 
 if (ONE_PID_BUILD_EXAMPLES)
