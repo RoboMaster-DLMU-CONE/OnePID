@@ -27,7 +27,7 @@ template <Arithmetic T = float> class DeltaT {
      * @brief 构造函数，初始化计时器。
      */
     DeltaT() {
-#ifndef ZEPHYR_TOOLCHAIN_VARIANT
+#ifndef __ZEPHYR__
         last_time = std::chrono::steady_clock::now();
 #else
 #ifdef CONFIG_TIMER_HAS_64BIT_CYCLE_COUNTER
@@ -44,7 +44,7 @@ template <Arithmetic T = float> class DeltaT {
      */
     T getDeltaMS() {
 
-#ifndef ZEPHYR_TOOLCHAIN_VARIANT
+#ifndef __ZEPHYR__
         const auto now = std::chrono::steady_clock::now();
         const std::chrono::duration<T, std::milli> delta = now - last_time;
         last_time = now;
@@ -60,7 +60,8 @@ template <Arithmetic T = float> class DeltaT {
         const auto delta_cycles = current_cycles - last_time_cycles;
         last_time_cycles = current_cycles;
 
-        double ms_value = delta_cycles * 1000.0 / CYCLES_PER_SEC;
+        double ms_value =
+            delta_cycles * 1000.0 / CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC;
 
         if constexpr (std::is_integral_v<T>) {
             return ms_value < 1.0 ? (delta_cycles > 0 ? 1 : 0)
@@ -77,7 +78,7 @@ template <Arithmetic T = float> class DeltaT {
      * @details 将上一次记录的时间点更新为当前时间。
      */
     void reset() {
-#ifndef ZEPHYR_TOOLCHAIN_VARIANT
+#ifndef __ZEPHYR__
         last_time = std::chrono::steady_clock::now();
 
 #else
@@ -91,7 +92,7 @@ template <Arithmetic T = float> class DeltaT {
     };
 
   private:
-#ifndef ZEPHYR_TOOLCHAIN_VARIANT
+#ifndef __ZEPHYR__
     std::chrono::time_point<std::chrono::steady_clock>
         last_time; ///< 记录上一次调用的时间点
 #else
