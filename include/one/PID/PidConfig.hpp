@@ -10,7 +10,7 @@ template <typename Algorithm = Positional, typename ValueType = float,
 struct PidConfig : public PidParams<ValueType> {
     using ControllerType = PidController<Algorithm, ValueType, Features...>;
     using _ValueType = ValueType;
-    explicit constexpr PidConfig(const PidParams<ValueType> &p)
+    constexpr PidConfig(const PidParams<ValueType> &p)
         : PidParams<ValueType>(p) {};
     constexpr PidConfig() = default;
 };
