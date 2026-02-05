@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-set(CMAKE_CXX_STANDARD 20)
-
 option(ONE_PID_BUILD_EXAMPLES "Build OnePID Examples" OFF)
 option(ONE_PID_BUILD_TESTS "Build OnePID Tests" OFF)
 option(ONE_PID_BUILD_BENCHMARK "Build OnePID Benchmark" OFF)
@@ -22,6 +20,8 @@ target_include_directories(${PROJECT_NAME} INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
+
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_20)
 
 if (ZEPHYR_TOOLCHAIN_VARIANT)
   zephyr_link_libraries(${PROJECT_NAME}::${PROJECT_NAME})
