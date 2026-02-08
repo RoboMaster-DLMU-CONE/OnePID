@@ -7,9 +7,9 @@ option(ONE_PID_BUILD_BENCHMARK "Build OnePID Benchmark" OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if (ZEPHYR_TOOLCHAIN_VARIANT)
-  project(onepid VERSION 0.1.0)
+  project(onepid VERSION 0.2.0)
 else ()
-  project(OnePID VERSION 0.1.0)
+  project(OnePID VERSION 0.2.0)
 endif ()
 
 add_library(${PROJECT_NAME} INTERFACE)
